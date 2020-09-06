@@ -17,17 +17,17 @@ import com.neo.servicespluralsight.R;
 
 public class MyBoundServiceActivity extends AppCompatActivity {
 
-    boolean isBound = false;                                                // true if activity is bound the service
+    boolean isBound = false;                                                // true if activity is bound to the service
     private MyBoundService myBoundService;
 
     // to get connection btw calling activity and bound service
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {      // IBinder obj is received when onBind is called in bound service
+        public void onServiceConnected(ComponentName name, IBinder iBinder) {      // IBinder obj is received when onBind is called in bound service
             isBound = true;
 
-            MyBoundService.MyLocalBinder myLocalBinder = (MyBoundService.MyLocalBinder) service;
-            myBoundService = myLocalBinder.getService();                           // gets ref to the MyBoundService class
+            MyBoundService.MyLocalBinder myLocalBinder = (MyBoundService.MyLocalBinder) iBinder;
+            myBoundService = myLocalBinder.getService();                           // gets ref to the MyBoundService class, using the IBinder assoc with service
         }
 
         @Override

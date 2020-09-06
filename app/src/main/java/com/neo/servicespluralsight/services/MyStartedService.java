@@ -21,10 +21,11 @@ public class MyStartedService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // where work or job is done
         Log.i(TAG, "onStartCommand: Thread name: " + Thread.currentThread().getName());
         int sleepTime = intent.getIntExtra("sleepTime", 1);
         new MyAsyncTask().execute(sleepTime);
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
     @Override
@@ -40,11 +41,12 @@ public class MyStartedService extends Service {
         return null;                        // always return null to make a started service
     }
 
+
+
     /**
      * for running long Service Tasks in background thread
      */
     class MyAsyncTask extends AsyncTask<Integer, String, String> {
-
         final String TAG = MyAsyncTask.class.getSimpleName();
 
         @Override
@@ -62,6 +64,7 @@ public class MyStartedService extends Service {
             int sleepTime = ints[0];
             int ctrl = 1;
 
+            // Dummy long opp
             while (ctrl <= sleepTime) {
                 publishProgress("counter is now: " + ctrl);
                 try {
@@ -88,10 +91,9 @@ public class MyStartedService extends Service {
         protected void onPostExecute(String str) {
             // mainThread
             super.onPostExecute(str);
-            stopSelf();                                 // destroys service
+            stopSelf();                                 // destroys service from within Service class
 
             Log.i(TAG, "onPostExecute: Thread name: " + Thread.currentThread().getName());
-
 
             Intent intent = new Intent("action.service.to.activity");            // the string action acts as identifier
             intent.putExtra("startServiceResult", str);

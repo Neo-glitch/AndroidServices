@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -26,7 +27,7 @@ public class MyIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        // background
+        // background, where work is done
         int sleepTime = intent.getIntExtra("sleepTime", 1);
         ResultReceiver resultReceiver = intent.getParcelableExtra("receiver");
 

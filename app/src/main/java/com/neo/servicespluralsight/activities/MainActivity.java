@@ -17,6 +17,9 @@ import com.neo.servicespluralsight.services.MyIntentService;
 import com.neo.servicespluralsight.services.MyStartedService;
 import com.neo.servicespluralsight.R;
 
+
+
+
 /**
  * Author: Sriyank Siddhartha
  * <p>
@@ -42,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MyStartedService.class);
         intent.putExtra("sleepTime", 10);
         startService(intent);
-
     }
 
     public void stopStartedService(View view) {
@@ -69,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(myStartedServiceReceiver, intentFilter);
     }
 
-    // creates broadcastReceiver dynamically
+    // creates broadcastReceiver dynamically, and receives intent broadCasted that meets the criteria action
     private BroadcastReceiver myStartedServiceReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -84,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        // unreg the broadcastReceiver
+        // unreg the broadcastReceiver( to avoid memLeaks)
         unregisterReceiver(myStartedServiceReceiver);
     }
 
@@ -96,19 +98,14 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, MyMessengerActivity.class));
     }
 
-    // receives data back from MyIntentService class using ResultReceiver
+    // receives data back from MyIntentService class using ResultReceiver( can also be used with startedService)
     private class MyResultReceiver extends ResultReceiver {
 
-        /**
-         * Create a new ResultReceive to receive results.  Your
-         * {@link #onReceiveResult} method will be called from the thread running
-         * <var>handler</var> if given, or from an arbitrary thread if null.
-         *
-         * @param handler
-         */
+
         public MyResultReceiver(Handler handler) {
             super(handler);
         }
+
 
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
@@ -119,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                 final String result = resultData.getString("resultIntentService");
 
                 mHandler.post(new Runnable() {
-                    // to post data back to UI thread, works in main thread
+                    // to post data back to UI thread, works in main thread since handler is of the mainThread
                     @Override
                     public void run() {
                         tvIntentServiceResult.setText(result);

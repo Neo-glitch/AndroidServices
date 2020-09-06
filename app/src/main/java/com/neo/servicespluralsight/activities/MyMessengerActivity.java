@@ -20,6 +20,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.neo.servicespluralsight.R;
 import com.neo.servicespluralsight.services.MyMessengerService;
 
+
+/**
+ * Activity for IPC implementation
+ */
 public class MyMessengerActivity extends AppCompatActivity {
 
     private boolean mIsBound;
@@ -45,14 +49,18 @@ public class MyMessengerActivity extends AppCompatActivity {
         }
     }
 
+
+    // messenger to receive msg sent back from the Service on another process
     private Messenger incomingMessenger = new Messenger(new IncomingResponseHandler());
 
 
-
+    // for comm btw MessengerBoundService on another process and this Activity
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            mService = new Messenger(service);                  // gets ref to messenger present in MyMessengerService class
+            // gets ref to messenger present in MyMessengerService class using binder ret
+            // msg obj can be used to send msg to remote process and handled by handler assoc with msg obj
+            mService = new Messenger(service);
             mIsBound = true;
         }
 
@@ -67,6 +75,7 @@ public class MyMessengerActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messenger);
+        txvResult = findViewById(R.id.txvResult);
     }
 
 
@@ -80,15 +89,14 @@ public class MyMessengerActivity extends AppCompatActivity {
 
         // sends message to the remote process having the messengerService
         Message msgToService = Message.obtain(null, 43);                 // returns inst of messenger obj
-
         Bundle bundle = new Bundle();
         bundle.putInt("numOne", num1);
         bundle.putInt("numTwo", num2);
         msgToService.setData(bundle);
-        msgToService.replyTo = incomingMessenger;                               // reply to messenger, and expects a messenger ref
+        msgToService.replyTo = incomingMessenger;                               // passes messenger obj to reply to in the msg object
 
         try {
-            mService.send(msgToService);                                          // triggers handler present in MyMessengerService class
+            mService.send(msgToService);                                        // sends message to messengerService and msg handled by handler of this messenger
         } catch (RemoteException e) {
             e.printStackTrace();
         }

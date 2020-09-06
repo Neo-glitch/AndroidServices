@@ -13,10 +13,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+
+/**
+ * Bound Service for performing IPC(Inter Process Comm)
+ */
 public class MyMessengerService extends Service {
 
     /**
-     * class handles message coming from another process(MyMessengerActivity)
+     * handler to handle message coming from another thread on another process
      */
     private class IncomingHandler extends Handler{
         @Override
@@ -30,13 +34,14 @@ public class MyMessengerService extends Service {
                     int res = addNumber(numOne, numTwo);
                     Toast.makeText(getApplicationContext(), "Result: " + res, Toast.LENGTH_LONG).show();
 
-                    // Sends data back to calling activity
-                    Messenger incomingMessenger = msg.replyTo;                      // gets the ref of incoming messenger from MessengerActivity passed when sending the message
+                    // Sends data back to calling activity or thread or process
+                    Messenger incomingMessenger = msg.replyTo;                      // gets the ref the Messenger passed to this msg obj from MessengerActivity
                     Message msgToActivity = Message.obtain(null, 87);
 
                     Bundle bundleToActivity = new Bundle();
                     bundleToActivity.putInt("result", res);
                     msgToActivity.setData(bundleToActivity);
+
                     try {
                         incomingMessenger.send(msgToActivity);
                     } catch (RemoteException e) {

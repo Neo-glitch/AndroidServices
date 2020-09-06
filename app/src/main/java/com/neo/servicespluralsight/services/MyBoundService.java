@@ -7,11 +7,14 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
+
+
 public class MyBoundService extends Service {
 
     private MyLocalBinder myLocalBinder = new MyLocalBinder();
 
     public class MyLocalBinder extends Binder{
+        // class should ret instance of this BoundService
 
         /**
          * @return current inst of MyBoundService class
@@ -26,6 +29,7 @@ public class MyBoundService extends Service {
     public IBinder onBind(Intent intent) {
         return myLocalBinder;                               // to be bound service, must not return null
     }
+
 
     public int add(int a, int b) {
         return a + b;
