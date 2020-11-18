@@ -25,6 +25,8 @@
             android:exported="false"/>
         <service android:name=".services.MyBoundService"
             android:exported="false" />
+
+        <!-- service that runs on a separate process-->
         <service android:name=".services.MyMessengerService" android:process=":my_own_process"/>
     </application>
 
